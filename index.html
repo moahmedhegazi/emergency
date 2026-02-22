@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Can You Forgive Me, Amira?</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
 body{
     margin:0;
@@ -53,7 +54,6 @@ button{
     margin-top:200px;
 }
 
-/* shake effect */
 .shake{
     animation:shake 0.3s;
 }
@@ -65,7 +65,6 @@ button{
     100%{transform:translateX(0);}
 }
 
-/* floating hearts */
 .heart{
     position:absolute;
     color:red;
@@ -78,6 +77,7 @@ button{
 }
 </style>
 </head>
+
 <body>
 
 <h1>Can you forgive me, Amira? 💔</h1>
@@ -88,9 +88,7 @@ button{
 <button id="no">No 💔</button>
 </div>
 
-<div id="message">
-You made the perfect choice Amira 😍❤️🎉
-</div>
+<div id="message"></div>
 
 <script>
 const noBtn = document.getElementById("no");
@@ -101,26 +99,27 @@ const attemptsText = document.getElementById("attempts");
 let attempts = 0;
 let yesScale = 1;
 
-// No button behavior
-noBtn.addEventListener("mouseover", ()=>{
+// Move NO button (works on desktop & mobile)
+function moveNoButton() {
+
     attempts++;
     attemptsText.innerHTML = "Seriously Amira? Attempt #" + attempts + " 😅";
 
-    // move randomly faster
-    const x = Math.random() * (window.innerWidth - 120);
-    const y = Math.random() * (window.innerHeight - 60);
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+
+    const x = Math.random() * (window.innerWidth - btnWidth);
+    const y = Math.random() * (window.innerHeight - btnHeight);
+
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 
-    // grow Yes button
     yesScale += 0.25;
     yesBtn.style.transform = "scale(" + yesScale + ")";
 
-    // shake screen
     document.body.classList.add("shake");
     setTimeout(()=>document.body.classList.remove("shake"),300);
 
-    // if too many attempts → Yes fills screen
     if(attempts >= 6){
         yesBtn.style.position="fixed";
         yesBtn.style.top="0";
@@ -130,36 +129,41 @@ noBtn.addEventListener("mouseover", ()=>{
         yesBtn.style.fontSize="60px";
         yesBtn.innerHTML="Just Press YES ❤️";
     }
+}
+
+// Desktop
+noBtn.addEventListener("mouseover", moveNoButton);
+
+// Mobile
+noBtn.addEventListener("touchstart", function(e){
+    e.preventDefault();
+    moveNoButton();
 });
 
-// Yes click
+// YES click
 yesBtn.addEventListener("click", ()=>{
-    document.body.innerHTML="<h1 style='margin-top:200px;font-size:50px;color:#e60073;'>Best Decision Ever Amira 😍❤️🎉</h1>";
 
-    // massive confetti
-    var duration = 3 * 1000;
-    var end = Date.now() + duration;
+    yesBtn.style.display="none";
+    noBtn.style.display="none";
+    attemptsText.style.display="none";
 
-    (function frame() {
-        confetti({
-            particleCount: 5,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 }
-        });
-        confetti({
-            particleCount: 5,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 }
-        });
-        if (Date.now() < end) {
-            requestAnimationFrame(frame);
-        }
-    }());
+    message.style.display="block";
+    message.innerHTML = "Best Decision Ever Amira 😍❤️🎉";
+
+    const gif = document.createElement("img");
+    gif.src = "https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif";
+    gif.style.width = "250px";
+    gif.style.marginTop = "20px";
+    document.body.appendChild(gif);
+
+    confetti({
+        particleCount: 300,
+        spread: 150,
+        origin: { y: 0.6 }
+    });
 });
 
-// floating hearts
+// Floating hearts
 function createHeart(){
     const heart = document.createElement("div");
     heart.classList.add("heart");
