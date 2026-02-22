@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Can You Forgive Me, Amira?</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    text-align:center;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(to bottom,#ffccd5,#ffe6f0);
+    transition:0.2s;
+}
+
+h1{
+    margin-top:100px;
+    font-size:42px;
+}
+
+#attempts{
+    font-size:18px;
+    margin-top:10px;
+    color:#444;
+}
+
+button{
+    font-size:22px;
+    padding:15px 35px;
+    cursor:pointer;
+    border:none;
+    border-radius:15px;
+    transition:0.3s;
+}
+
+#yes{
+    background:#4CAF50;
+    color:white;
+    position:relative;
+}
+
+#no{
+    background:#f44336;
+    color:white;
+    position:absolute;
+}
+
+#message{
+    display:none;
+    font-size:40px;
+    color:#e60073;
+    margin-top:200px;
+}
+
+/* shake effect */
+.shake{
+    animation:shake 0.3s;
+}
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-10px);}
+    50%{transform:translateX(10px);}
+    75%{transform:translateX(-10px);}
+    100%{transform:translateX(0);}
+}
+
+/* floating hearts */
+.heart{
+    position:absolute;
+    color:red;
+    font-size:20px;
+    animation:float 6s linear infinite;
+}
+@keyframes float{
+    0%{transform:translateY(100vh);}
+    100%{transform:translateY(-10vh);}
+}
+</style>
+</head>
+<body>
+
+<h1>Can you forgive me, Amira? 💔</h1>
+<div id="attempts">Don't even try to press NO 😏</div>
+
+<div style="margin-top:50px;">
+<button id="yes">Yes ❤️</button>
+<button id="no">No 💔</button>
+</div>
+
+<div id="message">
+You made the perfect choice Amira 😍❤️🎉
+</div>
+
+<script>
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const message = document.getElementById("message");
+const attemptsText = document.getElementById("attempts");
+
+let attempts = 0;
+let yesScale = 1;
+
+// No button behavior
+noBtn.addEventListener("mouseover", ()=>{
+    attempts++;
+    attemptsText.innerHTML = "Seriously Amira? Attempt #" + attempts + " 😅";
+
+    // move randomly faster
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 60);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    // grow Yes button
+    yesScale += 0.25;
+    yesBtn.style.transform = "scale(" + yesScale + ")";
+
+    // shake screen
+    document.body.classList.add("shake");
+    setTimeout(()=>document.body.classList.remove("shake"),300);
+
+    // if too many attempts → Yes fills screen
+    if(attempts >= 6){
+        yesBtn.style.position="fixed";
+        yesBtn.style.top="0";
+        yesBtn.style.left="0";
+        yesBtn.style.width="100vw";
+        yesBtn.style.height="100vh";
+        yesBtn.style.fontSize="60px";
+        yesBtn.innerHTML="Just Press YES ❤️";
+    }
+});
+
+// Yes click
+yesBtn.addEventListener("click", ()=>{
+    document.body.innerHTML="<h1 style='margin-top:200px;font-size:50px;color:#e60073;'>Best Decision Ever Amira 😍❤️🎉</h1>";
+
+    // massive confetti
+    var duration = 3 * 1000;
+    var end = Date.now() + duration;
+
+    (function frame() {
+        confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+        });
+        confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+        });
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+});
+
+// floating hearts
+function createHeart(){
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*25+15)+"px";
+    document.body.appendChild(heart);
+    setTimeout(()=>{heart.remove();},6000);
+}
+setInterval(createHeart,400);
+</script>
+
+</body>
+</html>
