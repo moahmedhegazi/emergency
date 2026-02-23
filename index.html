@@ -12,7 +12,7 @@ body{
     text-align:center;
     font-family:Arial, sans-serif;
     background:linear-gradient(to bottom,#ffccd5,#ffe6f0);
-    transition:0.2s;
+    transition:0.3s;
 }
 
 h1{
@@ -54,8 +54,39 @@ button{
     margin-top:200px;
 }
 
+#warning, #boss{
+    display:none;
+    position:fixed;
+    top:35%;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:35px;
+    background:white;
+    padding:20px 40px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.4);
+    z-index:999;
+}
+
+#warning img{
+    width:200px;
+    display:block;
+    margin:10px auto 0;
+}
+
+#boss{
+    background:black;
+    color:red;
+    font-size:50px;
+    padding:40px 60px;
+}
+
+.dark{
+    background:black !important;
+}
+
 .shake{
-    animation:shake 0.3s;
+    animation:shake 0.3s infinite;
 }
 @keyframes shake{
     0%{transform:translateX(0);}
@@ -90,20 +121,51 @@ button{
 
 <div id="message"></div>
 
+<div id="warning">
+Don't mess with me 😎
+<img src="https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif">
+</div>
+
+<div id="boss">
+FINAL WARNING 😈
+</div>
+
 <script>
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const message = document.getElementById("message");
 const attemptsText = document.getElementById("attempts");
+const warning = document.getElementById("warning");
+const boss = document.getElementById("boss");
 
 let attempts = 0;
 let yesScale = 1;
 
-// Move NO button (works on desktop & mobile)
 function moveNoButton() {
 
     attempts++;
     attemptsText.innerHTML = "Seriously Amira? Attempt #" + attempts + " 😅";
+
+    // Attempt 3 → Funny warning
+    if(attempts === 3){
+        warning.style.display="block";
+        setTimeout(()=>{ warning.style.display="none"; },2000);
+    }
+
+    // Attempt 5 → Boss Mode
+    if(attempts === 5){
+        document.body.classList.add("dark","shake");
+        boss.style.display="block";
+
+        if(navigator.vibrate){
+            navigator.vibrate([200,100,200]);
+        }
+
+        setTimeout(()=>{
+            document.body.classList.remove("dark","shake");
+            boss.style.display="none";
+        },2000);
+    }
 
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
@@ -117,9 +179,6 @@ function moveNoButton() {
     yesScale += 0.25;
     yesBtn.style.transform = "scale(" + yesScale + ")";
 
-    document.body.classList.add("shake");
-    setTimeout(()=>document.body.classList.remove("shake"),300);
-
     if(attempts >= 6){
         yesBtn.style.position="fixed";
         yesBtn.style.top="0";
@@ -131,27 +190,22 @@ function moveNoButton() {
     }
 }
 
-// Desktop
 noBtn.addEventListener("mouseover", moveNoButton);
-
-// Mobile
 noBtn.addEventListener("touchstart", function(e){
     e.preventDefault();
     moveNoButton();
 });
 
-// YES click
 yesBtn.addEventListener("click", ()=>{
-
     yesBtn.style.display="none";
     noBtn.style.display="none";
     attemptsText.style.display="none";
 
     message.style.display="block";
-    message.innerHTML = "Best Decision Ever Ya Ktkoty 😍❤️🎉";
+    message.innerHTML = "Best Decision Ever Amira 😍❤️🎉";
 
     const gif = document.createElement("img");
-    gif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOG15OXdqbjZmanV2ZW5la2ExaWZvcjBlbHlpcHVjYjU2aHczYmpyYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT9IgKWQeoclWggTDO/giphy.gif";
+    gif.src = "https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif";
     gif.style.width = "250px";
     gif.style.marginTop = "20px";
     document.body.appendChild(gif);
@@ -163,7 +217,6 @@ yesBtn.addEventListener("click", ()=>{
     });
 });
 
-// Floating hearts
 function createHeart(){
     const heart = document.createElement("div");
     heart.classList.add("heart");
@@ -178,5 +231,3 @@ setInterval(createHeart,400);
 
 </body>
 </html>
-
-
